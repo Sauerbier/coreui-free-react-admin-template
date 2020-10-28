@@ -3,7 +3,7 @@ import { CFooter } from '@coreui/react'
 
 const TheFooter = () => {
   return (
-    <CFooter fixed={false}>
+    <CFooter className="dark" fixed={false}>
       <div>
         <a href="http://sauer-bier.de" target="_blank" rel="noopener noreferrer">HueX</a>
         <span className="ml-1">&copy; 2020 MedicyX ltd.</span>

@@ -1,1 +1,29 @@
 // Variable overrides
+$primary: #4638c2;
+$secondary: #4c4f54;
+$success: #45a164;
+$info: #4799eb;
+$warning: #e1a82d;
+$danger: #d16767;
+$light: #20202a;
+$dark: #181924;
+
+$danger-gradient: (
+  "start": #d16767,
+  "stop": #c14f4f,
+) !default;
+
+$warning-gradient: (
+  "start": #f9b115,
+  "stop": #f6960b,
+) !default;
+
+$success-gradient: (
+  "start": #45a164,
+  "stop": #2e8c47,
+) !default;
+
+$info-gradient: (
+  "start": #39f,
+  "stop": #2982cc,
+);

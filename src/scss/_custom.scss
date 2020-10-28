@@ -2,3 +2,56 @@
 .add-padding {
   padding: 1.25rem;
 }
+
+.c-app.dark-theme.c-default-layout {
+  color: #e1e1e1 !important;
+  background-color: #0a0b18;
+  --color: #e1e1e1 !important;
+}
+.dropdown-menu.dark {
+  color: #e1e1e1;
+  background-color: #34343b;
+  border-color: #181924;
+}
+
+.dropdown-menu > .dropdown-item {
+  color: #e1e1e1 !important;
+}
+
+.dropdown-menu > .dropdown-item:hover {
+  color: #e1e1e1;
+  background-color: hsla(0, 0%, 100%, 0.1);
+}
+
+.c-app.c-dark-theme {
+  --primary: #4638c2;
+  --secondary: #4c4f54;
+  --success: #45a164;
+  --info: #4799eb;
+  --warning: #e1a82d;
+  --danger: #d16767;
+  --light: #20202a;
+  --dark: #181924;
+}
+
+.c-sidebar.c-sidebar-dark {
+  color: #e1e1e1;
+  background: #2c2c34;
+  border: 0;
+}
+
+.c-header.c-header-light,
+.c-subheader {
+  background: #2c2c34 !important;
+  border-bottom: 0 !important;
+}
+
+.breadcrumb-item.active {
+  color: #e1e1e1 !important;
+}
+
+.c-footer.dark {
+  color: #e1e1e1;
+  background: #1e1e29;
+  border-top: 1px solid #181924;
+}
