@@ -2,12 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Service } from "../../src/types/ServiceTypes";
 
-export default function useServiceFetcher() {
-  const [services, setServices] = useState<Service[]>([]);
+export default function useServiceFetcher(setter: any) {
   useEffect(() => {
     axios.get<Service[]>("/api/services").then((response) => {
-      setServices(response.data);
+      setter(response.data);
     });
   }, []);
-  return services;
 }

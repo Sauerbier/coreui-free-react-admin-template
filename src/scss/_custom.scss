@@ -3,6 +3,11 @@
   padding: 1.25rem;
 }
 
+.pull-right {
+  float: right;
+  margin-left: auto;
+}
+
 .c-app.dark-theme.c-default-layout {
   color: #e1e1e1 !important;
   background-color: #0a0b18;
@@ -16,6 +21,10 @@
 
 .dropdown-menu > .dropdown-item {
   color: #e1e1e1 !important;
+}
+
+.dropdown-menu > .dropdown-item.disabled {
+  color: hsla(0, 0%, 88.2%, 0.6) !important;
 }
 
 .dropdown-menu > .dropdown-item:hover {
