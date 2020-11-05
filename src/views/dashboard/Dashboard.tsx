@@ -8,34 +8,12 @@ import {
   CRow,
   CWidgetDropdown,
 } from "@coreui/react";
-import useServiceFetcher from "../../hooks/ServiceFetcher";
 import { Service, ServiceState } from "../../types/ServiceTypes";
 import CIcon from "@coreui/icons-react";
+import { freeSet } from "@coreui/icons";
+import io from "socket.io-client";
 
-let ws: WebSocket;
-
-function connect() {
-  ws = new WebSocket("ws:/127.0.0.1:3000");
-  ws.onopen = () => {
-    console.log("WebSocket Client Connected");
-  };
-
-  ws.onerror = function(error) {
-    console.log(error);
-  };
-
-  ws.onclose = function(close) {
-    if (close.code !== 1000) {
-      //1000 = Normal Closure
-      console.log("reconnecting in 3 seconds...");
-      setTimeout(() => connect(), 3000);
-    }
-  };
-}
-
-function send(data: any) {
-  ws.send(JSON.stringify(data));
-}
+let ws: SocketIOClient.Socket = io("ws://127.0.0.1:3333");
 
 function getStateStyle(service: Service) {
   switch (service.state) {
@@ -46,6 +24,8 @@ function getStateStyle(service: Service) {
     case ServiceState.IDLE:
       return "gradient-secondary";
     case ServiceState.STOPPED:
+      return "gradient-dark";
+    case ServiceState.ERRORED:
       return "gradient-danger";
   }
 }
@@ -56,16 +36,23 @@ const Dashboard = () => {
   //useServiceFetcher(setServices);
 
   useEffect(() => {
-    connect();
-    ws.onmessage = (message) => {
-      console.log(message);
-      let data = JSON.parse(message.data);
-      console.log(data);
-      if (data && data.channel === "service-update") {
-        setServices(data.services);
+    ws.on("service-update", (services: Service[]) => {
+      services.forEach((s) => (s.error = ""));
+      setServices(services);
+    });
+    ws.on("service-crash", (crash: any) => {
+      let newServices = services.slice();
+      let service = services.find((s) => s.namespace === crash.namespace);
+      let i = services.findIndex((s) => s.namespace === crash.namespace);
+      if (service) {
+        service.state = ServiceState.ERRORED;
+        service.error = crash.error;
+
+        newServices[i] = service;
+        setServices(newServices);
       }
-    };
-  }, []);
+    });
+  }, [services]);
 
   return (
     <CRow>
@@ -80,7 +67,10 @@ const Dashboard = () => {
                 text={"Version: " + service.version}
                 key={service.namespace}
                 footerSlot={
-                  <p className="add-padding">{service.description}</p>
+                  <>
+                    <p className="add-padding">{service.description}</p>
+                    <p className="add-padding">{service.error}</p>
+                  </>
                 }
               >
                 <CDropdown>
@@ -94,11 +84,8 @@ const Dashboard = () => {
                         service.state !== ServiceState.STOPPED
                       }
                       onClick={() =>
-                        send({
-                          channel: "service-toggle",
-                          data: {
-                            namespace: service.namespace,
-                          },
+                        ws.emit("service-toggle", {
+                          namespace: service.namespace,
                         })
                       }
                     >
@@ -109,6 +96,16 @@ const Dashboard = () => {
                         service.state !== ServiceState.STOPPED && (
                           <CIcon name="cil-ban" className="pull-right" />
                         )}
+                    </CDropdownItem>
+                    <CDropdownItem
+                      onClick={() =>
+                        ws.emit("service-restart", {
+                          namespace: service.namespace,
+                        })
+                      }
+                    >
+                      Restart
+                      <CIcon content={freeSet.cilSync} className="pull-right" />
                     </CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>

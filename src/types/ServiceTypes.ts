@@ -5,6 +5,8 @@ interface Service {
   version: string;
   state: ServiceState;
   required: boolean;
+
+  error?: string; 
 }
 
 enum ServiceState {
@@ -12,6 +14,7 @@ enum ServiceState {
   IDLE = 1,
   STARTING = 2,
   STOPPED = 3,
+  ERRORED = 4
 }
 
 interface SocketMessage{
