@@ -12,8 +12,10 @@ import { Service, ServiceState } from "../../types/ServiceTypes";
 import CIcon from "@coreui/icons-react";
 import { freeSet } from "@coreui/icons";
 import io from "socket.io-client";
+import Axios from "axios";
+import useWebsocketUrl from "../../hooks/websocketFetcher";
 
-let ws: SocketIOClient.Socket = io("ws://127.0.0.1:3333");
+let ws: SocketIOClient.Socket;
 
 function getStateStyle(service: Service) {
   switch (service.state) {
@@ -34,6 +36,11 @@ const Dashboard = () => {
   const [services, setServices] = useState<Service[]>([]);
 
   //useServiceFetcher(setServices);
+  const [websocketUrl, setWebsocketUrl] = useWebsocketUrl();
+
+  useEffect(() => {
+    ws = io(websocketUrl as string);
+  }, [websocketUrl]);
 
   useEffect(() => {
     ws.on("service-update", (services: Service[]) => {
@@ -52,7 +59,7 @@ const Dashboard = () => {
         setServices(newServices);
       }
     });
-  }, [services]);
+  }, [websocketUrl, services]);
 
   return (
     <CRow>
