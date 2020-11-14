@@ -14,6 +14,7 @@ import { freeSet } from "@coreui/icons";
 import io from "socket.io-client";
 import Axios from "axios";
 import useWebsocketUrl from "../../hooks/websocketFetcher";
+import { useHistory } from "react-router-dom";
 
 let ws: SocketIOClient.Socket;
 
@@ -37,6 +38,7 @@ const Dashboard = () => {
 
   //useServiceFetcher(setServices);
   const [websocketUrl, setWebsocketUrl] = useWebsocketUrl();
+  const router = useHistory();
 
   useEffect(() => {
     ws = io(websocketUrl as string);

@@ -5,7 +5,9 @@ function useWebsocketUrl() {
   const [websocketUrl, setWebsocketUrl] = useState<string>();
 
   useEffect(() => {
-    Axios.get("/api/websocket").then((res) => setWebsocketUrl(res.data));
+    Axios.get("/api/webinterface/websocket").then((res) =>
+      setWebsocketUrl(res.data)
+    );
   }, []);
 
   return [websocketUrl, setWebsocketUrl];
