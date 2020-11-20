@@ -5,11 +5,9 @@ import { useEffect, useState } from "react";
 const useConfig = (namespace: string) => {
   const [config, setConfig] = useState<JSONSchema6>();
 
-  useEffect(() => {
-    Axios.get("/api/webinterface/service/" + namespace).then((res) =>
-      setConfig(res.data)
-    );
-  }, []);
+  Axios.get("/api/webinterface/service/" + namespace).then((res) =>
+    setConfig(res.data)
+  );
 
   return [config, setConfig];
 };

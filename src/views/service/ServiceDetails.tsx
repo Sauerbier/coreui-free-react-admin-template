@@ -9,16 +9,6 @@ type ServiceDetailsProps = {
   namespace: string;
 };
 
-const schema: JSONSchema6 = {
-  title: "Todo",
-  type: "object",
-  required: ["title"],
-  properties: {
-    title: { type: "string", title: "Title", default: "A new task" },
-    done: { type: "boolean", title: "Done?", default: false },
-  },
-};
-
 const ServiceDetails = (props: RouteComponentProps<ServiceDetailsProps>) => {
   const [config, setConfig] = useConfig(props.match.params.namespace);
 
