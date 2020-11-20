@@ -1,3 +1,5 @@
+import { JSONSchema6 } from "json-schema";
+
 interface Service {
   namespace: string;
   name: string;
@@ -7,6 +9,11 @@ interface Service {
   required: boolean;
 
   error?: string; 
+}
+
+interface ServiceSchema{
+  schema: JSONSchema6
+  uiSchema: JSONSchema6
 }
 
 enum ServiceState {
@@ -22,4 +29,4 @@ interface SocketMessage{
 }
 
 export {ServiceState}
-export type { Service, SocketMessage };
+export type { Service, ServiceSchema, SocketMessage };

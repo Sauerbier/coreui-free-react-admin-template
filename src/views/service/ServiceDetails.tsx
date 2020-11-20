@@ -12,14 +12,15 @@ type ServiceDetailsProps = {
 
 const ServiceDetails = (props: RouteComponentProps<ServiceDetailsProps>) => {
   const namespace = props.match.params.namespace;
-  const [config, setConfig] = useConfig(namespace);
+  const [config, setConfig]: any = useConfig(namespace);
 
   return (
     <>
       <CRow>
         {config && (
           <Form
-            schema={config as JSONSchema6}
+            schema={config.schema}
+            uiSchema={config.uiSchema}
             onChange={() => console.log("changed")}
             onSubmit={(e) =>
               Axios.post("/api/webinterface/service/" + namespace, e.formData)
