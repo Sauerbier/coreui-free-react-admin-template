@@ -4,13 +4,15 @@ import Form from "react-jsonschema-form";
 import { RouteComponentProps } from "react-router-dom";
 import { JSONSchema6 } from "json-schema";
 import useConfig from "../../hooks/configHook";
+import Axios from "axios";
 
 type ServiceDetailsProps = {
   namespace: string;
 };
 
 const ServiceDetails = (props: RouteComponentProps<ServiceDetailsProps>) => {
-  const [config, setConfig] = useConfig(props.match.params.namespace);
+  const namespace = props.match.params.namespace;
+  const [config, setConfig] = useConfig(namespace);
 
   return (
     <>
@@ -19,7 +21,9 @@ const ServiceDetails = (props: RouteComponentProps<ServiceDetailsProps>) => {
           <Form
             schema={config as JSONSchema6}
             onChange={() => console.log("changed")}
-            onSubmit={() => console.log("submitted")}
+            onSubmit={(e) =>
+              Axios.post("/api/webinterface/service/" + namespace, e.formData)
+            }
             onError={() => console.log("errors")}
           />
         )}
