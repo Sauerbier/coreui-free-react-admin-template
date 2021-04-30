@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  CButton,
   CCol,
   CDropdown,
   CDropdownItem,
@@ -12,7 +13,6 @@ import { Service, ServiceState } from "../../types/ServiceTypes";
 import CIcon from "@coreui/icons-react";
 import { freeSet } from "@coreui/icons";
 import io from "socket.io-client";
-import Axios from "axios";
 import useWebsocketUrl from "../../hooks/websocketFetcher";
 import { useHistory } from "react-router-dom";
 
@@ -34,6 +34,7 @@ function getStateStyle(service: Service) {
 }
 
 const Dashboard = () => {
+  const [filterRequired, setFilterRequired] = useState<boolean>(true);
   const [services, setServices] = useState<Service[]>([]);
 
   //useServiceFetcher(setServices);
@@ -46,7 +47,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     ws.on("service-update", (services: Service[]) => {
-      services.forEach((s) => (s.error = ""));
       setServices(services);
     });
     ws.on("service-crash", (crash: any) => {
@@ -64,65 +64,82 @@ const Dashboard = () => {
   }, [websocketUrl, services]);
 
   return (
-    <CRow>
-      {services
-        .sort((a, b) => a.state - b.state)
-        .map((service) => {
-          return (
-            <CCol sm="6" lg="3">
-              <CWidgetDropdown
-                color={getStateStyle(service)}
-                header={service.name}
-                text={"Version: " + service.version}
-                key={service.namespace}
-                footerSlot={
-                  <>
-                    <p className="add-padding">{service.description}</p>
-                    <p className="add-padding">{service.error}</p>
-                  </>
-                }
-              >
-                <CDropdown>
-                  <CDropdownToggle caret={false} color="transparent">
-                    <CIcon name="cil-settings" />
-                  </CDropdownToggle>
-                  <CDropdownMenu className="pt-0 dark" placement="bottom-end">
-                    <CDropdownItem
-                      disabled={
-                        service.required &&
-                        service.state !== ServiceState.STOPPED
-                      }
-                      onClick={() =>
-                        ws.emit("service-toggle", {
-                          namespace: service.namespace,
-                        })
-                      }
-                    >
-                      {service.state === ServiceState.STOPPED
-                        ? "Enable"
-                        : "Disable"}
-                      {service.required &&
-                        service.state !== ServiceState.STOPPED && (
-                          <CIcon name="cil-ban" className="pull-right" />
-                        )}
-                    </CDropdownItem>
-                    <CDropdownItem
-                      onClick={() =>
-                        ws.emit("service-restart", {
-                          namespace: service.namespace,
-                        })
-                      }
-                    >
-                      Restart
-                      <CIcon content={freeSet.cilSync} className="pull-right" />
-                    </CDropdownItem>
-                  </CDropdownMenu>
-                </CDropdown>
-              </CWidgetDropdown>
-            </CCol>
-          );
-        })}
-    </CRow>
+    <>
+      <CRow>
+        <CCol sm="12" lg="12" style={{ paddingBottom: "30px" }}>
+          <CButton
+            color="primary"
+            className="pull-right"
+            onClick={() => setFilterRequired(!filterRequired)}
+          >
+            <CIcon
+              content={filterRequired ? freeSet.cilFilterX : freeSet.cilFilter}
+            />
+          </CButton>
+        </CCol>
+        {services
+          .sort((a, b) => a.state - b.state)
+          .filter((s) => (filterRequired && !s.required) || !filterRequired)
+          .map((service) => {
+            return (
+              <CCol sm="6" lg="3">
+                <CWidgetDropdown
+                  color={getStateStyle(service)}
+                  header={service.name}
+                  text={"Version: " + service.version}
+                  key={service.namespace}
+                  footerSlot={
+                    <>
+                      <p className="add-padding">{service.description}</p>
+                      <p className="add-padding">{service.error}</p>
+                    </>
+                  }
+                >
+                  <CDropdown>
+                    <CDropdownToggle caret={false} color="transparent">
+                      <CIcon name="cil-settings" />
+                    </CDropdownToggle>
+                    <CDropdownMenu className="pt-0 dark" placement="bottom-end">
+                      <CDropdownItem
+                        disabled={
+                          service.required &&
+                          service.state !== ServiceState.STOPPED
+                        }
+                        onClick={() =>
+                          ws.emit("service-toggle", {
+                            namespace: service.namespace,
+                          })
+                        }
+                      >
+                        {service.state === ServiceState.STOPPED
+                          ? "Enable"
+                          : "Disable"}
+                        {service.required &&
+                          service.state !== ServiceState.STOPPED && (
+                            <CIcon name="cil-ban" className="pull-right" />
+                          )}
+                      </CDropdownItem>
+                      <CDropdownItem
+                        onClick={() =>
+                          ws.emit("service-restart", {
+                            namespace: service.namespace,
+                          })
+                        }
+                      >
+                        Restart
+                        <CIcon
+                          content={freeSet.cilSync}
+                          className="pull-right"
+                        />
+                      </CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CWidgetDropdown>
+              </CCol>
+            );
+          })}
+      </CRow>
+    </>
   );
 };
 
