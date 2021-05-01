@@ -42,7 +42,7 @@ const Dashboard = () => {
   const router = useHistory();
 
   useEffect(() => {
-    ws = io(websocketUrl as string);
+    ws = io();
   }, [websocketUrl]);
 
   useEffect(() => {
